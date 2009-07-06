@@ -7,6 +7,7 @@ import sys, os
 import re, time
 import MySQLdb
 import gprconfig as config
+import math
 
 # Global
 DELIMITER = "\t"
@@ -75,7 +76,7 @@ def filter(argv):
         if (record[0] != name or x == numrows-1) and len(values) >= limit:
             writeDataRow(files, name, values, record[4])
             values = {}
-        values[record[1]] = record[2]
+        values[record[1]] = math.log(record[2]) / math.log(2)
         name = record[0]
     
     conn.close()
