@@ -12,7 +12,7 @@ import gprconfig as config
 DELIMITER = "\t"
 
 def usage():
-    print "Usage:  %s <MIN_VALUE> <LIMIT>" % os.path.basename(sys.argv[0])
+    print "Usage:  %s <MIN_NET_RED> <MIN_ARRAYS>" % os.path.basename(sys.argv[0])
     print "<MIN_NET_RED> is an integer"
     print "<MIN_ARRAYS> is an integer > 0"
 
@@ -75,7 +75,7 @@ def filter(argv):
         if (record[0] != name or x == numrows-1) and len(values) >= limit:
             writeDataRow(files, name, values, record[4])
             values = {}
-        values[record[1]] = record[3]
+        values[record[1]] = record[2]
         name = record[0]
     
     conn.close()
