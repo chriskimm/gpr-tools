@@ -51,7 +51,7 @@ def filter(argv):
         limit = lf
 
     # write header row
-    columns = ["UID", "NAME", "GWEIGHT"]
+    columns = ["UNIQID", "NAME", "GWEIGHT"]
     trimmed_files = [file.replace(".gpr","") for file in files]
     columns.extend(trimmed_files) 
     writeLine(DELIMITER.join(columns)) 
