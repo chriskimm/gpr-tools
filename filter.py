@@ -13,8 +13,8 @@ DELIMITER = "\t"
 
 def usage():
     print "Usage:  %s <MIN_VALUE> <LIMIT>" % os.path.basename(sys.argv[0])
-    print "<MIN_VALUE> is an integer"
-    print "<LIMIT> is an integer > 0"
+    print "<MIN_NET_RED> is an integer"
+    print "<MIN_ARRAYS> is an integer > 0"
 
 def filter(argv):
     if len(argv) != 2:
