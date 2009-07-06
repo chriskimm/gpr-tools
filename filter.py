@@ -52,7 +52,8 @@ def filter(argv):
 
     # write header row
     columns = ["UID", "NAME", "GWEIGHT"]
-    columns.extend(files) 
+    trimmed_files = [file.replace(".gpr","") for file in files]
+    columns.extend(trimmed_files) 
     writeLine(DELIMITER.join(columns)) 
     
     # write dummy "EWEIGHT" row
