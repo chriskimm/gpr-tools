@@ -11,14 +11,16 @@ import math
 
 # Global
 DELIMITER = "\t"
+out = sys.stdout
 
 def usage():
-    print "Usage:  %s <MIN_NET_RED> <MIN_ARRAYS>" % os.path.basename(sys.argv[0])
-    print "<MIN_NET_RED> is an integer"
-    print "<MIN_ARRAYS> is an integer > 0"
+    print "Usage:  %s <MIN_NET_RED> <MIN_ARRAYS> [<OUTPUT_FILE>]" % os.path.basename(sys.argv[0])
+    print "<MIN_NET_RED> is an integer    [required]"
+    print "<MIN_ARRAYS> is an integer > 0 [required]"
+    print "<OUTPUT_FILE> is a filename    [optional]"
 
 def filter(argv):
-    if len(argv) != 2:
+    if len(argv) < 2:
         usage()
         sys.exit(2)
 
@@ -54,13 +56,13 @@ def filter(argv):
     columns = ["UNIQID", "NAME", "GWEIGHT"]
     trimmed_files = [file.replace(".gpr","") for file in files]
     columns.extend(trimmed_files) 
-    writeLine(DELIMITER.join(columns)) 
+    write (DELIMITER.join(columns)) 
     
     # write dummy "EWEIGHT" row
     columns = ["EWEIGHT", "", ""]
     columns.extend(["1" for x in range(len(files))])
-    writeLine(DELIMITER.join(columns)) 
-                   
+    write (DELIMITER.join(columns)) 
+    
     sql = "SELECT r.name, f.filename, r.`Ratio of Medians (635/532)`, r.`F635 Median - B635`, description "\
         "FROM filtered_results r, files f "\
         "WHERE r.file_id = f.id "\
@@ -68,6 +70,7 @@ def filter(argv):
         "ORDER BY name;" % (min_val,)
     cursor = conn.cursor()
     cursor.execute(sql)
+
     # get the number of rows in the resultset
     numrows = int(cursor.rowcount)
     name = None
@@ -77,20 +80,25 @@ def filter(argv):
         if (record[0] != name or x == numrows-1) and len(values) >= limit:
             writeDataRow(files, name, values, record[4])
             values = {}
-        values[record[1]] = math.log(record[2]) / math.log(2)
+        if record[2] > 0:
+            values[record[1]] = math.log(record[2]) / math.log(2)
+        else:
+            values[record[1]] = ""
         name = record[0]
-    
-    conn.close()
 
-def writeLine(s):
-    print s
+    conn.close()
 
 def writeDataRow(files, name, values, description):
     if not description:
         description = ""
     vals = [name, description, "1"]
     vals.extend([toStr(values.get(f)) for f in files])
-    print DELIMITER.join(vals)
+    write (DELIMITER.join(vals))
+
+def write(s):
+    out.write(s)
+    out.write("\n")
+    out.flush()
 
 def toStr(s):
     if s:
@@ -98,5 +106,14 @@ def toStr(s):
     else:
         return ""
 
+def main(argv):
+    if (len(argv) > 2):
+        try:
+            global out
+            out = open(argv[2], "w")
+        except:
+            sys.exit("error opening output file")
+    filter(argv)
+
 if __name__ == "__main__":
-   sys.exit(filter(sys.argv[1:]))
+    sys.exit(main(sys.argv[1:]))

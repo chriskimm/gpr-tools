@@ -1,7 +1,7 @@
 Required software
 
 MySQL >= 5.0.3
-Python >= 2.5
+Python >= 2.5 and < 3.0
 MySQLdb = 1.2.2
 
 

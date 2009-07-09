@@ -27,8 +27,8 @@ def processResultLine(fields, columns, cursor, file_id):
     sql += ") values ("
 
     for x in range(len(fields)):
-        val = fields[x]
-        if val.strip() == "":
+        val = fields[x].strip()
+        if val == "" or val == "Error":
             fields[x] = "null"
         elif val[0] != '"' and not numeric_regex.match(val):
             fields[x] = '"' + val + '"'
